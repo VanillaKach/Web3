@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5471ae7b-2661-4f9c-9dad-b2082eaa9b98" name="Changes" comment="Сделаны тесты для модуля services.py">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reports.py" afterDir="false" />
-    </list>
+    <list default="true" id="5471ae7b-2661-4f9c-9dad-b2082eaa9b98" name="Changes" comment="Исправлен README.md" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -52,22 +48,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Python tests.Python tests for test_services.test_search_transfers_to_individuals.executor": "Run",
-    "Python.1.executor": "Run",
-    "Python.reports.executor": "Run",
-    "Python.services.executor": "Run",
-    "Python.srvices.executor": "Run",
-    "Python.utils.executor": "Run",
-    "Python.views.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "coursework__M3",
-    "settings.editor.selected.configurable": "preferences.fileTypes"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for test_services.test_search_transfers_to_individuals.executor&quot;: &quot;Run&quot;,
+    &quot;Python.1.executor&quot;: &quot;Run&quot;,
+    &quot;Python.reports.executor&quot;: &quot;Run&quot;,
+    &quot;Python.services.executor&quot;: &quot;Run&quot;,
+    &quot;Python.srvices.executor&quot;: &quot;Run&quot;,
+    &quot;Python.utils.executor&quot;: &quot;Run&quot;,
+    &quot;Python.views.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;coursework__M3&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Python tests.Python tests for test_services.test_search_transfers_to_individuals">
     <configuration name="1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Web3" />
@@ -278,7 +274,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740594349046</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Исправлен README.md">
+      <option name="closed" value="true" />
+      <created>1740596070050</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1740596070050</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -306,6 +310,7 @@
     <MESSAGE value="Сделаны тесты для модуля utils.py" />
     <MESSAGE value="Сделаны тесты для модуля views.py" />
     <MESSAGE value="Сделаны тесты для модуля services.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="Сделаны тесты для модуля services.py" />
+    <MESSAGE value="Исправлен README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Исправлен README.md" />
   </component>
 </project>
