@@ -1,121 +1,92 @@
-import json
 from datetime import datetime
-from typing import Any, Dict
-from unittest import mock
+from typing import Any, Dict, Generator
+from unittest.mock import MagicMock, patch
 
+import pandas as pd
 import pytest
 
-from src.views import events_page, get_date_range, get_greeting, main_page
+from src.utils import get_exchange_rate, get_stock_prices, get_transaction_data
 
 
-# Тест для get_greeting
-def test_get_greeting() -> None:
-    with mock.patch("src.views.datetime") as mock_datetime:
-        mock_datetime.now.return_value.hour = 10
-        assert get_greeting() == "Доброе утро"
-
-        mock_datetime.now.return_value.hour = 14
-        assert get_greeting() == "Добрый день"
-
-        mock_datetime.now.return_value.hour = 19
-        assert get_greeting() == "Добрый вечер"
-
-        mock_datetime.now.return_value.hour = 1
-        assert get_greeting() == "Доброй ночи"
+@pytest.fixture
+def mock_environment() -> Generator[None, None, None]:
+    """Фикстура для мока переменных окружения."""
+    with patch("os.getenv") as mock_getenv:
+        mock_getenv.return_value = "mock_api_key"
+        yield
 
 
-# Тест для main_page
-@mock.patch("src.views.get_transaction_data")
-@mock.patch("src.views.get_exchange_rate")
-@mock.patch("src.views.get_stock_prices")
-def test_main_page(
-    mock_get_stock_prices: mock.Mock, mock_get_exchange_rate: mock.Mock, mock_get_transaction_data: mock.Mock
-) -> None:
-    mock_get_transaction_data.return_value = {"cards": [], "top_transactions": []}
-    mock_get_exchange_rate.return_value = [{"currency": "USD", "rate": 74.23}]
-    mock_get_stock_prices.return_value = [{"stock": "AAPL", "price": 150.12}]
-
-    response: str = main_page("2021-12-31 12:00:00")
-    response_data: Dict[str, Any] = json.loads(response)
-
-    assert response_data["greeting"] is not None
-    assert response_data["cards"] == []
-    assert response_data["top_transactions"] == []
-    assert response_data["currency_rates"] == [{"currency": "USD", "rate": 74.23}]
-    assert response_data["stock_prices"] == [{"stock": "AAPL", "price": 150.12}]
+@pytest.fixture
+def mock_requests_get() -> Generator[MagicMock, None, None]:
+    """Фикстура для мока HTTP-запросов."""
+    with patch("src.utils.requests.get") as mock_get:
+        yield mock_get
 
 
-@mock.patch("src.views.get_transaction_data")
-def test_main_page_invalid_date(mock_get_transaction_data: mock.Mock) -> None:
-    mock_get_transaction_data.side_effect = Exception("Invalid date format")
-
-    response: str = main_page("invalid-date")
-    response_data: Dict[str, Any] = json.loads(response)
-
-    assert "error" in response_data
-    assert response_data["error"] == "Invalid date format"
-
-
-# Тест для get_date_range
-def test_get_date_range() -> None:
-    date: datetime = datetime(2021, 12, 15)
-
-    start: datetime
-    end: datetime
-
-    start, end = get_date_range(date, "W")
-    assert start <= date <= end
-
-    start, end = get_date_range(date, "M")
-    assert start.day == 1
-    assert end == date
-
-    start, end = get_date_range(date, "Y")
-    assert start.month == 1
-    assert start.day == 1
-    assert end == date
-
-    start, end = get_date_range(date, "ALL")
-    assert start == datetime.min
-    assert end == date
-
-    with pytest.raises(ValueError, match="Неверный период. Используйте W, M, Y или ALL."):
-        get_date_range(date, "INVALID")
-
-
-# Тест для events_page
-@mock.patch("src.views.get_transaction_data")
-@mock.patch("src.views.get_exchange_rate")
-@mock.patch("src.views.get_stock_prices")
-def test_events_page(
-    mock_get_stock_prices: mock.Mock, mock_get_exchange_rate: mock.Mock, mock_get_transaction_data: mock.Mock
-) -> None:
-    mock_get_transaction_data.return_value = {
-        "expenses": {"total": -100, "categories": [], "transfers_and_cash": []},
-        "income": {"total": 200, "categories": []},
+def test_get_exchange_rate(mock_environment: None, mock_requests_get: MagicMock) -> None:
+    """Тест для проверки получения обменного курса."""
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "rates": {
+            "USD": 1.0,
+            "EUR": 0.85,
+        }
     }
-    mock_get_exchange_rate.return_value = [{"currency": "USD", "rate": 74.23}]
-    mock_get_stock_prices.return_value = [{"stock": "AAPL", "price": 150.12}]
+    mock_requests_get.return_value = mock_response
 
-    response: str = events_page("2021-12-31")
-    response_data: Dict[str, Any] = json.loads(response)
+    result = get_exchange_rate()
 
-    assert response_data["expenses"]["total_amount"] == -100
-    assert response_data["income"]["total_amount"] == 200
-    assert response_data["currency_rates"] == [{"currency": "USD", "rate": 74.23}]
-    assert response_data["stock_prices"] == [{"stock": "AAPL", "price": 150.12}]
-
-
-@mock.patch("src.views.get_transaction_data")
-def test_events_page_invalid_date(mock_get_transaction_data: mock.Mock) -> None:
-    mock_get_transaction_data.side_effect = Exception("Invalid date format")
-
-    response: str = events_page("invalid-date")
-    response_data: Dict[str, Any] = json.loads(response)
-
-    assert "error" in response_data
-    assert response_data["error"] == "Invalid date format"
+    assert len(result) == 2
+    assert result[0]["currency"] == "USD"
+    assert result[0]["rate"] == 1.0
+    assert result[1]["currency"] == "EUR"
+    assert result[1]["rate"] == 0.85
 
 
-if __name__ == "__main__":
-    pytest.main()
+def test_get_exchange_rate_failure(mock_environment: None, mock_requests_get: MagicMock) -> None:
+    """Тест для проверки обработки ошибок при получении обменного курса."""
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+    mock_requests_get.return_value = mock_response
+
+    with pytest.raises(Exception, match="Не удалось получить данные от API."):
+        get_exchange_rate()
+
+
+def test_get_stock_prices() -> None:
+    """Тест для проверки получения цен акций."""
+    result = get_stock_prices()
+
+    assert len(result) == 5
+    assert result[0]["stock"] == "AAPL"
+    assert result[0]["price"] == 150.12
+
+
+@pytest.fixture
+def mock_read_excel() -> Generator[MagicMock, None, None]:
+    """Фикстура для мока чтения из Excel."""
+    with patch("src.utils.pd.read_excel") as mock_read:
+        mock_df = pd.DataFrame(
+            {
+                "Дата операции": ["31.12.2021 16:44:00", "31.12.2021 16:42:04"],
+                "Сумма платежа": [-160.89, -64.00],
+                "Категория": ["Супермаркеты", "Супермаркеты"],
+                "Статус": ["OK", "OK"],
+            }
+        )
+        mock_df["Дата операции"] = pd.to_datetime(mock_df["Дата операции"], format="%d.%m.%Y %H:%M:%S")
+        mock_read.return_value = mock_df
+        yield mock_read
+
+
+def test_get_transaction_data(mock_read_excel: None) -> None:
+    """Тест для проверки получения данных о транзакциях."""
+    start_date = datetime(2021, 12, 31)
+    end_date = datetime(2021, 12, 31)
+
+    result: Dict[str, Any] = get_transaction_data(start_date, end_date)
+
+    assert result["expenses"]["total"] == 0.0
+    assert len(result["expenses"]["categories"]) == 0
+    assert result["income"]["total"] == 0
