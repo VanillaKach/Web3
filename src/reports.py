@@ -10,11 +10,14 @@ logging.basicConfig(level=logging.INFO)
 
 
 # Декоратор для записи отчета в файл
-def save_report_to_file(file_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., str]]:
-    def decorator(func: Callable[..., Any]) -> Callable[..., str]:
-        def wrapper(*args: Tuple, **kwargs: Dict) -> str:
+def save_report_to_file(file_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        def wrapper(*args: Tuple, **kwargs: Dict) -> Any:
             result = func(*args, **kwargs)
-            result_json = json.dumps(result, ensure_ascii=False, indent=4)
+
+            # Преобразуем результат в JSON и сохраняем в файл
+            result_json = result.to_dict(orient='records') if isinstance(result, pd.DataFrame) else result
+            result_json = json.dumps(result_json, ensure_ascii=False, indent=4)
 
             # Используем имя файла по умолчанию, если не передано
             save_file_name = file_name if file_name is not None else "report.json"
@@ -22,7 +25,8 @@ def save_report_to_file(file_name: Optional[str] = None) -> Callable[[Callable[.
             with open(save_file_name, "w", encoding="utf-8") as f:
                 f.write(result_json)
             logging.info(f"Отчет сохранен в файл: {save_file_name}")
-            return result_json
+
+            return result  # Возвращаем оригинальный результат, а не JSON
 
         return wrapper
 

@@ -89,34 +89,18 @@
 
 ```
 ---------- coverage: platform linux, python 3.12.3-final-0 -----------
-Name                                Stmts   Miss  Cover
--------------------------------------------------------
-main.py                                35     26    26%
-src/__init__.py                         0      0   100%
-src/decorators.py                      26      0   100%
-src/external_api.py                    29     10    66%
-src/generators.py                      28      1    96%
-src/masks.py                           40      6    85%
-src/processing.py                      10      0   100%
-src/regular.py                         20      0   100%
-src/utils.py                           33      4    88%
-src/widget.py                          28      1    96%
-src/working_with_tables.py             14      0   100%
-tests/__init__.py                       0      0   100%
-tests/conftest.py                       0      0   100%
-tests/test_decorators.py               53      1    98%
-tests/test_external_api.py             27      1    96%
-tests/test_generators.py               25      0   100%
-tests/test_masks.py                    18      0   100%
-tests/test_processing.py               18      0   100%
-tests/test_regular.py                  21      0   100%
-tests/test_utils.py                    26      1    96%
-tests/test_widget.py                   32      0   100%
-tests/test_working_with_tables.py      22      1    95%
--------------------------------------------------------
-TOTAL                                 505     52    90%
-
-
+Name                     Stmts   Miss  Cover
+--------------------------------------------
+src/__init__.py              0      0   100%
+src/services.py             42      0   100%
+src/utils.py                37      2    95%
+tests/__init__.py            0      0   100%
+tests/test_reports.py        0      0   100%
+tests/test_services.py      33      0   100%
+tests/test_utils.py         51      0   100%
+tests/test_views.py         51      0   100%
+--------------------------------------------
+TOTAL                      214      2    99%
 ```
 
 ## Документация:
