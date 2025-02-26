@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pypt-1"
+name = "Web3"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
@@ -10,6 +10,7 @@ python = "^3.12"
 python-dotenv = "^1.0.1"
 pandas = "^2.2.3"
 requests = "^2.32.3"
+pandas-stubs = "^2.2.3.241126"
 
 
 [tool.poetry.group.lint.dependencies]
