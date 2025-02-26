@@ -1,13 +1,15 @@
 import json
 import logging
 from datetime import datetime, timedelta
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
+
 from src.utils import get_exchange_rate, get_stock_prices, get_transaction_data
 
 # Настройка логгирования
 logging.basicConfig(level=logging.INFO)
 
 # ----------------------- Код для задач "Главная" -----------------------
+
 
 def get_greeting() -> str:
     """
@@ -25,6 +27,7 @@ def get_greeting() -> str:
     else:
         return "Доброй ночи"
 
+
 def main_page(date_time_str: str) -> str:
     """
     Обрабатывает главную страницу и возвращает данные в формате JSON.
@@ -34,7 +37,7 @@ def main_page(date_time_str: str) -> str:
     """
     try:
         # Преобразование строки даты и времени в объект datetime
-        date_time = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+        date_time = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
 
         # Получаем информацию о транзакциях
         transactions_summary = get_transaction_data(date_time, date_time)
@@ -45,7 +48,7 @@ def main_page(date_time_str: str) -> str:
             "cards": transactions_summary["cards"],
             "top_transactions": transactions_summary["top_transactions"],
             "currency_rates": get_exchange_rate(),
-            "stock_prices": get_stock_prices()
+            "stock_prices": get_stock_prices(),
         }
 
         # Логируем информацию о выполнении
@@ -56,7 +59,9 @@ def main_page(date_time_str: str) -> str:
         logging.error(f"Ошибка при обработке главной страницы: {e}")
         return json.dumps({"error": str(e)}, ensure_ascii=False, indent=4)
 
+
 # ----------------------- Код для задач "События" -----------------------
+
 
 def get_date_range(date: datetime, period: str) -> Tuple[datetime, datetime]:
     """
@@ -83,6 +88,7 @@ def get_date_range(date: datetime, period: str) -> Tuple[datetime, datetime]:
 
     return start_date, end_date
 
+
 def events_page(date_str: str, period: Optional[str] = "M") -> str:
     """
     Обрабатывает данные о событиях и возвращает данные в формате JSON.
@@ -93,8 +99,10 @@ def events_page(date_str: str, period: Optional[str] = "M") -> str:
     """
     try:
         # Преобразование строки даты в объект datetime
-        date = datetime.strptime(date_str, '%Y-%m-%d')
-
+        date = datetime.strptime(date_str, "%Y-%m-%d")
+        # Проверяем, что period не None
+        if period is None:
+            period = "M"  # Устанавливаем значение по умолчанию
         # Получаем диапазон дат
         start_date, end_date = get_date_range(date, period)
 
@@ -104,16 +112,16 @@ def events_page(date_str: str, period: Optional[str] = "M") -> str:
         # Формируем JSON-ответ
         response = {
             "expenses": {
-                "total_amount": round(transaction_data['expenses']['total']),
-                "main": transaction_data['expenses']['categories'],
-                "transfers_and_cash": transaction_data['expenses']['transfers_and_cash']
+                "total_amount": round(transaction_data["expenses"]["total"]),
+                "main": transaction_data["expenses"]["categories"],
+                "transfers_and_cash": transaction_data["expenses"]["transfers_and_cash"],
             },
             "income": {
-                "total_amount": round(transaction_data['income']['total']),
-                "main": transaction_data['income']['categories']
+                "total_amount": round(transaction_data["income"]["total"]),
+                "main": transaction_data["income"]["categories"],
             },
             "currency_rates": get_exchange_rate(),
-            "stock_prices": get_stock_prices()
+            "stock_prices": get_stock_prices(),
         }
 
         # Логируем информацию о выполнении

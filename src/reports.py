@@ -1,26 +1,27 @@
 import json
 import logging
-import pandas as pd
 from datetime import datetime, timedelta
-from typing import Optional, Callable
+from typing import Any, Callable, Optional, Dict, Tuple
+
+import pandas as pd
 
 # Настройка логгирования
 logging.basicConfig(level=logging.INFO)
 
 
 # Декоратор для записи отчета в файл
-def save_report_to_file(file_name: Optional[str] = None) -> Callable:
-    def decorator(func: Callable) -> Callable:
-        def wrapper(*args, **kwargs) -> str:
+def save_report_to_file(file_name: Optional[str] = None) -> Callable[[Callable[..., Any]], Callable[..., str]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., str]:
+        def wrapper(*args: Tuple, **kwargs: Dict) -> str:
             result = func(*args, **kwargs)
             result_json = json.dumps(result, ensure_ascii=False, indent=4)
 
-            if file_name is None:
-                file_name = "report.json"  # Имя файла по умолчанию
+            # Используем имя файла по умолчанию, если не передано
+            save_file_name = file_name if file_name is not None else "report.json"
 
-            with open(file_name, "w", encoding="utf-8") as f:
+            with open(save_file_name, "w", encoding="utf-8") as f:
                 f.write(result_json)
-            logging.info(f"Отчет сохранен в файл: {file_name}")
+            logging.info(f"Отчет сохранен в файл: {save_file_name}")
             return result_json
 
         return wrapper
@@ -56,7 +57,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     total_spending = filtered_transactions["Сумма операции"].sum()
     logging.info(f"Траты по категории '{category}': {total_spending}")
 
-    return {"category": category, "total_spending": total_spending}
+    return pd.DataFrame({"category": [category], "total_spending": [total_spending]})
 
 
 # ----------------------- Отчет «Траты по дням недели» -----------------------
@@ -115,7 +116,9 @@ def spending_by_workday(transactions: pd.DataFrame, date: Optional[str] = None) 
     average_spending = (
         filtered_transactions.groupby(filtered_transactions["День недели"] < 5)["Сумма операции"].mean().reset_index()
     )
-    average_spending.columns = ["Рабочий день", "Средние траты"]
+
+    # Правильное присвоение значений
+    average_spending.columns = pd.Index(["Рабочий день", "Средние траты"])
 
     logging.info(f"Средние траты в рабочий и выходной день: {average_spending}")
 
