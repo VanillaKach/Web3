@@ -48,23 +48,25 @@ def get_stock_prices() -> List[Dict[str, Any]]:
 
 
 def get_transaction_data(start_date: datetime, end_date: datetime) -> Dict[str, Any]:
-    """
-    Получает данные о транзакциях в заданном диапазоне дат.
-
-    :param start_date: Начальная дата диапазона
-    :param end_date: Конечная дата диапазона
-    :return: Словарь с данными о расходах и поступлениях
-    """
-    df = pd.read_excel("data/operations.xlsx")  # Укажите путь к вашему файлу
-    df["Дата операции"] = pd.to_datetime(df["Дата операции"])
+    df = pd.read_excel("data/operations.xlsx")
+    df["Дата операции"] = pd.to_datetime(df["Дата операции"], format="%d.%m.%Y %H:%M:%S")
 
     # Фильтрация по диапазону дат
     filtered_df = df[(df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)]
 
+    # Добавляем вывод для отладки
+    print("Filtered DataFrame:")
+    print(filtered_df)
+
     # Расходы
     expenses_total = filtered_df["Сумма платежа"].sum()
-    expenses_by_category = filtered_df.groupby("Категория")["Сумма платежа"].sum().nlargest(7).reset_index()
+    print("Total Expenses:", expenses_total)  # Вывод для отладки
 
+    expenses_by_category = filtered_df.groupby("Категория")["Сумма платежа"].sum().nlargest(7).reset_index()
+    print("Expenses by Category:")
+    print(expenses_by_category)  # Вывод для отладки
+
+    # Остальные расходы
     other_expenses = (
         filtered_df.groupby("Категория")["Сумма платежа"].sum().sum() - expenses_by_category["Сумма платежа"].sum()
     )
