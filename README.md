@@ -92,15 +92,17 @@
 Name                     Stmts   Miss  Cover
 --------------------------------------------
 src/__init__.py              0      0   100%
+src/reports.py              52      3    94%
 src/services.py             42      0   100%
 src/utils.py                37      2    95%
 tests/__init__.py            0      0   100%
-tests/test_reports.py        0      0   100%
+tests/test_reports.py       49      0   100%
 tests/test_services.py      33      0   100%
 tests/test_utils.py         51      0   100%
 tests/test_views.py         51      0   100%
 --------------------------------------------
-TOTAL                      214      2    99%
+TOTAL                      315      5    98%
+
 ```
 
 ## Документация:
